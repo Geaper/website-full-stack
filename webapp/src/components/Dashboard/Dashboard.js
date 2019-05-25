@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../configs';
 
 const Dashboard = () => {
 
+    const [users, setUsers] = useState([]);
+
     const fetchUsers = async () => {
         const data = await fetch(global.apiBaseURL + "/users").then(dataPromise => dataPromise.json()).then(data => {
-            console.log(data);
+            setUsers(data);
         });
     };
 
@@ -13,8 +15,11 @@ const Dashboard = () => {
     
     return (
         <div className="App">
-            <h1>Hello world</h1>
-            
+           {users.map(user => (
+               <h1 key={user.id}>{user.firstname}</h1>
+           ))}
+           <h1>{users.length}</h1>
+
         </div>
     );
 }
