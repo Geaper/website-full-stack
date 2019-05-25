@@ -1,2 +1,3 @@
 cd backend
-node start
+node server.js
+pause

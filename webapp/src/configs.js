@@ -1,0 +1,1 @@
+global.apiBaseURL = "http://localhost:8081";

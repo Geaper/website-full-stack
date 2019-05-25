@@ -3,6 +3,8 @@ var app = express();
 app.use(express.static('public')); // public is the static content
 var bodyParser = require('body-parser');
 var request = require("request");
+var cors = require('cors');
+app.use(cors());
 
 const apiBaseURL = "https://redmine-mock-api.herokuapp.com"
 
