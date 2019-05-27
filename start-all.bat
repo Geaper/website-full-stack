@@ -1,2 +1,2 @@
-call start-server.bat
-call start-webapp.bat
+start start-server.bat
+start start-webapp.bat
