@@ -31,6 +31,7 @@ db.on('error', (error) => {
 db.on('open', () => {
     console.log("Connected to Database");
 
+    /*
     var requestLoop = setInterval(function () {
         console.log("GETTING ISSUES...");
         let url = apiBaseURL + "/api/v1/issues?after=" + new Date("05 October 2011 14:48 UTC").toISOString() + "&limit=1";
@@ -100,6 +101,7 @@ db.on('open', () => {
             }
         });
     }, 10000);
+    */
 
 });
 
@@ -126,4 +128,39 @@ app.get('/users', function (req, res) {
             res.send(body);
         }
     });
+});
+
+// Total helpdesk items
+app.get("/globalIndicators", function(req, res) {
+    let globalIndicators = {};
+
+
+    db.collection("issues").find({}).toArray(function(err, result) {
+        if(err) throw err;
+        let issues = result;
+
+        issues.forEach(function(issue) {
+            if(issue.closed_on && issue.created_on) {
+                var diff = Math.abs(new Date(issue.closed_on) - new Date(issue.created_on));
+                var minutes = Math.floor((diff/1000)/60);
+                
+                if(!isNaN(minutes)) {
+                    console.log(minutes);
+                    globalIndicators.responseDiferencial += minutes;
+                }
+                
+            }
+        });
+        globalIndicators.responseDiferencial /= issues.length;
+      
+        globalIndicators.issuesSize = issues.length;
+        res.send(globalIndicators);
+    });
+
+    /*
+    db.collection("issues").count({}, function(error, numOfIssues) {
+        globalIndicators.issuesSize = numOfIssues;
+        res.send(globalIndicators);
+    });
+    */
 });
