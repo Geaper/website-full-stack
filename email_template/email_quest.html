@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Inquérito de Satisfação</title>
+    <!-- Font Awesome Icon Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .title {
+            text-align: center;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        #presentation {
+            /*border-style: solid;*/
+            width: 50%;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        #name {
+            font-style: italic;
+            font-weight: bold;
+
+        }
+
+        .req_details {
+            /*border-style: solid;*/
+            width: 50%;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        #client,
+        #product,
+        #subject,
+        #timestamp,
+        #operator {
+            color: red;
+            font-weight: bold;
+        }
+
+        .inq {
+            /*border-style: solid;*/
+            width: 30%;
+            margin-right: auto;
+            margin-left: auto;
+            padding-right: 10%;
+            text-align: right;
+
+        }
+
+        .links {
+            color: black;
+            text-decoration: none;
+
+        }
+
+        .checked {
+            color: orange;
+        }
+
+        #goodbye {
+            text-align: right;
+            margin-right: 10%;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1 class="title">Inquério de Satisfação - Sistema de Gestão de Qualidade</h1>
+    </br>
+    <div id="presentation">
+        <p>Caro(a) <span id="name">Guilherme Monteiro</span>,</p>
+        <p>este inquérito visa avaliar a qualidade do serviço de apoio ao cliente da nossa empresa - <b>JIBS</b>,</p>
+        <p>tendo por base a sua experiência no âmbito dos diferentes contactos feitos com os nossos serviços,</p>
+        <p>relativamente ao seguinte pedido:</p>
+    </div>
+    </br>
+    <div class="req_details">
+        <p><span id="client">Cliente: </span>Victoria's Secret</p>
+        <p><span id="product">Produto: </span>InterBase</p>
+        <p><span id="subject">Assunto: </span>Lorem ipsum dolor sit amet, consectetur adipisicing elit</p>
+        <p><span id="timestamp">Data e Hora da submissão: </span>2019-04-08 / 21:23:47</p>
+        <p><span id="operator">Ticket atendido pelo operador: </span>Mariana Costa</p>
+    </div>
+    </br></br>
+    <h3 class="title">Por favor indique o seu grau de satisfação, </br>relativamente à resolução do ticket mencionado
+        anteriormente:</h3>
+    </br>
+    <div class="inq">
+        <div id=sat1><a href="http://www.google.pt/1" class="links">Totalmente insatisfeito: <span
+                    class="fa fa-star checked"></span><span class="fa fa-star"></span><span
+                    class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span></a></div>
+        </br>
+        <div id=sat2><a href="http://www.google.pt/2" class="links">Insatisfeito: <span
+                    class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span
+                    class="fa fa-star"></span><span class="fa fa-star"></span><span class="fa fa-star"></span></a></div>
+        </br>
+        <div id=sat3><a href="http://www.google.pt/3" class="links">Nem insatisfeito nem satisfeito: <span
+                    class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span
+                    class="fa fa-star checked"></span><span class="fa fa-star"></span><span
+                    class="fa fa-star"></span></a></div>
+        </br>
+        <div id=sat4><a href="http://www.google.pt/4" class="links">Satisfeito:<span
+                    class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span
+                    class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span
+                    class="fa fa-star"></span></a></div>
+        </br>
+        <div id=sat5><a href="http://www.google.pt/5" class="links">Totalmente satisfeito: <span
+                    class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span
+                    class="fa fa-star checked"></span><span class="fa fa-star checked"></span><span
+                    class="fa fa-star checked"></span></a></div>
+        </br>
+    </div>
+    </br>
+    <div id="goodbye">
+        <p>Obrigado pela colaboração,</br> os melhores cumprimentos,</br>departamento de qualidade da JIBS.</p>
+    </div>
+
+</body>
+</p>
+
+</html>
