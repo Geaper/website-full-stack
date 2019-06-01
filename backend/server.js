@@ -85,7 +85,7 @@ db.on('open', () => {
                                         var mailOptions = {
                                             from: 'spamppcin@gmail.com',
                                             to: 'spamppcin@gmail.com',
-                                            subject: 'Inquérito de Satisfação',
+                                            subject: issue.id + ' - Inquérito de Satisfação',
                                             html: body
                                         };
     
