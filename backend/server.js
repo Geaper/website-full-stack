@@ -21,7 +21,6 @@ var transporter = nodemailer.createTransport({
     tls: { rejectUnauthorized: false }
 });
 
-console.log(module.uiBaseURL);
 
 // DB Connection
 mongoose.connect('mongodb://localhost/webdb', { useNewUrlParser: true });
@@ -62,43 +61,48 @@ db.on('open', () => {
                                 if (issue.author.id == user.id) {
                                     issue.author = user;
 
-                                    // Parse by @ -> Project@Client
-                                    let splitName = issue.project.name.split("@");
-                                    let product = splitName[0].split("|")[1].trim();
-                                    let client = splitName[1].trim();
 
-                                    // Send email for each user
-                                    let body = "<html><head> <meta charset=\"UTF-8\"> <title>Inqu\u00E9rito de Satisfa\u00E7\u00E3o</title> <!-- Font Awesome Icon Library --> <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css\"> <style> .title { text-align: center; font-family: Arial, Helvetica, sans-serif; } #presentation { /*border-style: solid;*/ width: 50%; margin-right: auto; margin-left: auto; } #name { font-style: italic; font-weight: bold; } .req_details { /*border-style: solid;*/ width: 50%; margin-right: auto; margin-left: auto; } #client, #product, #subject, #timestamp, #operator { color: red; font-weight: bold; } .inq { /*border-style: solid;*/ width: 30%; margin-right: auto; margin-left: auto; padding-right: 10%; text-align: right; } .links { color: black; text-decoration: none; } .checked { color: orange; } #goodbye { text-align: right; margin-right: 10%; } </style></head><body> <h1 class=\"title\">Inqu\u00E9rio de Satisfa\u00E7\u00E3o - Sistema de Gest\u00E3o de Qualidade</h1> </br> <div id=\"presentation\"> <p>Caro(a) <span id=\"name\">" + user.firstname + " " + user.lastname + "</span>,</p> <p>este inqu\u00E9rito visa avaliar a qualidade do servi\u00E7o de apoio ao cliente da nossa empresa - <b>JIBS</b>,</p> <p>tendo por base a sua experi\u00EAncia no \u00E2mbito dos diferentes contactos feitos com os nossos servi\u00E7os,</p> <p>relativamente ao seguinte pedido:</p> </div> </br> <div class=\"req_details\"> <p><span id=\"client\">Cliente: </span>" + client + "</p> <p><span id=\"product\">Produto: </span>" + product + "</p> <p><span id=\"subject\">Assunto: </span>" + issue.subject + "</p> <p><span id=\"timestamp\">Data e Hora da submiss\u00E3o: </span>" + issue.start_date + "</p> <p><span id=\"operator\">Ticket atendido pelo operador: </span>" + issue.id + "</p> </div> </br></br> <h3 class=\"title\">Por favor indique o seu grau de satisfa\u00E7\u00E3o, </br>relativamente \u00E0 resolu\u00E7\u00E3o do ticket mencionado anteriormente:</h3> </br> <div class=\"inq\"> <div id=sat1><a href=\"" + uiBaseURL + "/submission?issueId=" + issue.id + "&score=1\" class=\"links\">Totalmente insatisfeito: <span class=\"fa fa-star checked\"></span><span class=\"fa fa-star\"></span><span class=\"fa fa-star\"></span><span class=\"fa fa-star\"></span><span class=\"fa fa-star\"></span></a></div> </br> <div id=sat2><a href=\"" + uiBaseURL + "/submission?issueId=" + issue.id + "&score=2\" class=\"links\">Insatisfeito: <span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star\"></span><span class=\"fa fa-star\"></span><span class=\"fa fa-star\"></span></a></div> </br> <div id=sat3><a href=\"" + uiBaseURL + "/submission?issueId=" + issue.id + "&score=3\" class=\"links\">Nem insatisfeito nem satisfeito: <span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star\"></span><span class=\"fa fa-star\"></span></a></div> </br> <div id=sat4><a href=\"" + uiBaseURL + "/submission?issueId=" + issue.id + "&score=4\" class=\"links\">Satisfeito:<span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star\"></span></a></div> </br> <div id=sat5><a href=\"" + uiBaseURL + "/submission?issueId=" + issue.id + "&score=5\" class=\"links\">Totalmente satisfeito: <span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span></a></div> </br> </div> </br> <div id=\"goodbye\"> <p>Obrigado pela colabora\u00E7\u00E3o,</br> os melhores cumprimentos,</br>departamento de qualidade da JIBS.</p> </div></body></p></html>";
-
-                                    var mailOptions = {
-                                        from: 'spamppcin@gmail.com',
-                                        to: 'spamppcin@gmail.com',
-                                        subject: 'Inquérito de Satisfação',
-                                        html: body
-                                    };
-
-                                    transporter.sendMail(mailOptions, function (error, info) {
-                                        if (error) {
-                                            console.log(error);
-                                        } else {
-                                            console.log('Email sent: ' + info.response);
-                                        }
+                                    db.collection("users").updateOne({"_id": user.id}, {$set: user}, {upsert: true, multi: true}).then(result => {
+                                        //const { matchedCount, modifiedCount } = result;
+                                        //console.log(`Successfully matched ${matchedCount} and modified ${modifiedCount} users.`)
+                                    })
+                                    .catch(error => {
+                                        console.error(error);
+                                    });
+        
+                                    db.collection("issues").updateOne({"_id": issue.id}, {$set: issue}, {upsert: true}).then(result => {
+                                        const { matchedCount , modifiedCount } = result;
+                                        //console.log(result);
+                                        //console.log(`Successfully matched ${matchedCount} and modified ${modifiedCount} issues.`)
+                                        // Parse by @ -> Project@Client
+                                        let splitName = issue.project.name.split("@");
+                                        let product = splitName[0].split("|")[1].trim();
+                                        let client = splitName[1].trim();
+    
+                                        // Send email for each user
+                                        let body = "<html><head> <meta charset=\"UTF-8\"> <title>Inqu\u00E9rito de Satisfa\u00E7\u00E3o</title> <!-- Font Awesome Icon Library --> <link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css\"> <style> .title { text-align: center; font-family: Arial, Helvetica, sans-serif; } #presentation { /*border-style: solid;*/ width: 50%; margin-right: auto; margin-left: auto; } #name { font-style: italic; font-weight: bold; } .req_details { /*border-style: solid;*/ width: 50%; margin-right: auto; margin-left: auto; } #client, #product, #subject, #timestamp, #operator { color: red; font-weight: bold; } .inq { /*border-style: solid;*/ width: 30%; margin-right: auto; margin-left: auto; padding-right: 10%; text-align: right; } .links { color: black; text-decoration: none; } .checked { color: orange; } #goodbye { text-align: right; margin-right: 10%; } </style></head><body> <h1 class=\"title\">Inqu\u00E9rio de Satisfa\u00E7\u00E3o - Sistema de Gest\u00E3o de Qualidade</h1> </br> <div id=\"presentation\"> <p>Caro(a) <span id=\"name\">" + user.firstname + " " + user.lastname + "</span>,</p> <p>este inqu\u00E9rito visa avaliar a qualidade do servi\u00E7o de apoio ao cliente da nossa empresa - <b>JIBS</b>,</p> <p>tendo por base a sua experi\u00EAncia no \u00E2mbito dos diferentes contactos feitos com os nossos servi\u00E7os,</p> <p>relativamente ao seguinte pedido:</p> </div> </br> <div class=\"req_details\"> <p><span id=\"client\">Cliente: </span>" + client + "</p> <p><span id=\"product\">Produto: </span>" + product + "</p> <p><span id=\"subject\">Assunto: </span>" + issue.subject + "</p> <p><span id=\"timestamp\">Data e Hora da submiss\u00E3o: </span>" + issue.start_date + "</p> <p><span id=\"operator\">Ticket atendido pelo operador: </span>" + issue.id + "</p> </div> </br></br> <h3 class=\"title\">Por favor indique o seu grau de satisfa\u00E7\u00E3o, </br>relativamente \u00E0 resolu\u00E7\u00E3o do ticket mencionado anteriormente:</h3> </br> <div class=\"inq\"> <div id=sat1><a href=\"" + uiBaseURL + "/submission?issueId=" + issue.id + "&score=1\" class=\"links\">Totalmente insatisfeito: <span class=\"fa fa-star checked\"></span><span class=\"fa fa-star\"></span><span class=\"fa fa-star\"></span><span class=\"fa fa-star\"></span><span class=\"fa fa-star\"></span></a></div> </br> <div id=sat2><a href=\"" + uiBaseURL + "/submission?issueId=" + issue.id + "&score=2\" class=\"links\">Insatisfeito: <span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star\"></span><span class=\"fa fa-star\"></span><span class=\"fa fa-star\"></span></a></div> </br> <div id=sat3><a href=\"" + uiBaseURL + "/submission?issueId=" + issue.id + "&score=3\" class=\"links\">Nem insatisfeito nem satisfeito: <span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star\"></span><span class=\"fa fa-star\"></span></a></div> </br> <div id=sat4><a href=\"" + uiBaseURL + "/submission?issueId=" + issue.id + "&score=4\" class=\"links\">Satisfeito:<span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star\"></span></a></div> </br> <div id=sat5><a href=\"" + uiBaseURL + "/submission?issueId=" + issue.id + "&score=5\" class=\"links\">Totalmente satisfeito: <span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span><span class=\"fa fa-star checked\"></span></a></div> </br> </div> </br> <div id=\"goodbye\"> <p>Obrigado pela colabora\u00E7\u00E3o,</br> os melhores cumprimentos,</br>departamento de qualidade da JIBS.</p> </div></body></p></html>";
+    
+                                        var mailOptions = {
+                                            from: 'spamppcin@gmail.com',
+                                            to: 'spamppcin@gmail.com',
+                                            subject: 'Inquérito de Satisfação',
+                                            html: body
+                                        };
+    
+                                        transporter.sendMail(mailOptions, function (error, info) {
+                                            if (error) {
+                                                console.log(error);
+                                            } else {
+                                                console.log('Email sent: ' + info.response);
+                                            }
+                                        });
+                                    })
+                                    .catch(error => {
+                                        console.error(error);
                                     });
                                 }
                             }
-                        }
-
-                        db.collection("users").insertMany(users, function (error, response) {
-                            if (error) throw error;
-                            console.log("Number of users inserted: " + response.insertedCount);
-                            db.close();
-                        });
-
-                        db.collection("issues").insertMany(issues, function (error, response) {
-                            if (error) throw error;
-                            console.log("Number of issues inserted: " + response.insertedCount);
-                            db.close();
-                        });
+                        }   
                     }
                 });
             }
@@ -172,8 +176,28 @@ app.get("/globalIndicators", function(req, res) {
 
 // Endpoint that gets the evaluation of the user
 app.get("/evaluation/:id", function(req, res) {
-    let id = req.params.id;
-    let score = req.query.score;
+    let issueId = Number(req.params.id);
+    let score = Number(req.query.score);
 
-    res.send(score);
+    db.collection("issues").findOne({"_id": issueId}).then(result => {
+        if(result) {
+            //Check if score exists
+            if(!result.score) {
+                db.collection("issues").updateOne({"id": issueId}, {$set: {"score": score}},{multi: true}).then(result => {
+                    console.log("Score updated. Issue -> " + issueId);
+                    res.send({});
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+            }
+            else {
+                console.log("Score already exists");
+                res.status(500).send({ error: "Already evaluated"});
+            }
+        }
+    })
+    .catch(error => {
+        console.error(error);
+    });
 });
