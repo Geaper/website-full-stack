@@ -9,6 +9,8 @@ app.use(cors());
 var mongoose = require('mongoose');
 var nodemailer = require('nodemailer');
 
+let GlobalStats = require('./models/GlobalStats');
+
 let uiBaseURL = "http://localhost:3000";
 
 // Email transporter
@@ -72,6 +74,41 @@ db.on('open', () => {
         
                                     db.collection("issues").updateOne({"_id": issue.id}, {$set: issue}, {upsert: true}).then(result => {
                                         const { matchedCount , modifiedCount } = result;
+                                        
+                                        issue.start_date = "2015-04-04T20:42:45.786+00:00";
+                                        db.collection("globalStats").findOne({"startDate" : issue.start_date}, function(err, result) {
+                                            if (err) throw err;
+                                            console.log(result);
+                                            
+                                            if(result) {
+
+                                                let globalStats = result;
+                                                globalStats.numberOfTickets++;
+
+                                                // update global statistics in the db
+                                                db.collection("globalStats").updateOne({"startDate": globalStats.startDate}, {$set: globalStats}, function(err, result) {
+                                                    if (err) throw err;
+                                                    console.log(globalStats);
+                                                });
+                                            }
+                                            else {
+                                                let globalStats = new GlobalStats({
+                                                    startDate: issue.start_date,
+                                                    numberOfTickets: 1,
+                                                    priorityLowMean: 1,
+                                                    priorityNormalMean: 1,
+                                                    priorityHighMean: 1
+                                                });
+    
+                                                // insert global statistics in the db
+                                                db.collection("globalStats").insertOne(globalStats, function(err, result) {
+                                                    if (err) throw err;
+                                                    console.log(globalStats);
+                                                });
+                                            }
+                                        })
+                                       
+                                        
                                         //console.log(result);
                                         //console.log(`Successfully matched ${matchedCount} and modified ${modifiedCount} issues.`)
                                         // Parse by @ -> Project@Client
@@ -186,6 +223,20 @@ app.get("/evaluation/:id", function(req, res) {
                 db.collection("issues").updateOne({"id": issueId}, {$set: {"score": score}},{multi: true}).then(result => {
                     console.log("Score updated. Issue -> " + issueId);
                     res.send({});
+
+                  
+                    
+                    // insert global statistics in the db
+                    db.collection("globalStats").insertMany().then(result => {
+                        let globalStats = new GlobalStats({
+                            numberOfTickets: score
+                        });
+                        
+                        console.log(globalStats);
+                    })
+                    .error(error => {
+                        console.error(error);
+                    });
                 })
                 .catch(error => {
                     console.error(error);
