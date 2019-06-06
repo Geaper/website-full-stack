@@ -18,7 +18,7 @@ let uiBaseURL = "http://localhost:3000";
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'spamppcout@gmail.com',
+        user: 'spamppcipca@gmail.com',
         pass: '@Barcelos19'
     },
     tls: { rejectUnauthorized: false }
@@ -51,7 +51,7 @@ db.on('open', () => {
                 let issues = JSON.parse(body).issues;
 
                 request({
-                    url: apiBaseURL + "/api/v1/users?forceMail=tiago.geaper@gmail.com",
+                    url: apiBaseURL + "/api/v1/users?forceMail=spamppcin@gmail.com",
                     method: "GET"
                 }, function (error, response, body) {
                     if (!error && response.statusCode === 200) {
@@ -96,7 +96,6 @@ db.on('open', () => {
                                             html: body
                                         };
     
-                                        /*
                                         transporter.sendMail(mailOptions, function (error, info) {
                                             if (error) {
                                                 console.log(error);
@@ -104,7 +103,6 @@ db.on('open', () => {
                                                 console.log('Email sent: ' + info.response);
                                             }
                                         });
-                                        */
                                     })
                                     .catch(error => {
                                         console.error(error);
@@ -119,7 +117,7 @@ db.on('open', () => {
                 console.log('error' + response.statusCode);
             }
         });
-    }, 1000);
+    }, 3000);
 
 });
 
@@ -190,24 +188,26 @@ app.get("/evaluation/:id", function(req, res) {
 
     db.collection("issues").findOne({"_id": issueId}).then(result => {
         if(result) {
+
+            let issue = result;
             //Check if score exists
-            if(!result.score) {
-                db.collection("issues").updateOne({"id": issueId}, {$set: {"score": score}},{multi: true}).then(result => {
+            if(!issue.score) {
+
+                issue.score = score;
+
+                db.collection("issues").updateOne({"id": issueId}, {$set: issue}).then(result => {
                     console.log("Score updated. Issue -> " + issueId);
+
+                    db.collection("globalStats").find({"startDate" : issue.startDate}, function(err, result) {
+                        let gs = result;
+
+                        db.collection("globalStats").updateOne({"_id" : gs._id}, {$set: gs}, function(err, result) {
+                            console.log("updated global stats");
+                        });
+                    });
+
                     res.send({});
 
-                  
-                    
-                    // insert global statistics in the db
-                    db.collection("globalStats").insertMany().then(result => {
-                        let globalStats = new GlobalStats({
-                            numberOfTickets: score
-                        });
-                        
-                    })
-                    .error(error => {
-                        console.error(error);
-                    });
                 })
                 .catch(error => {
                     console.error(error);
