@@ -38,8 +38,7 @@ db.on('open', () => {
 
     setInterval(function () {
         statisticsThread.globalStats(db);
-        console.log("Looping...");
-    }, 5000);
+    }, 1000);
 
     var requestLoop = setInterval(function () {
         let url = apiBaseURL + "/api/v1/issues?after=" + new Date("05 October 2011 14:48 UTC").toISOString() + "&limit=1";
@@ -51,7 +50,6 @@ db.on('open', () => {
 
                 let issues = JSON.parse(body).issues;
 
-                console.log("GETTING USERS...");
                 request({
                     url: apiBaseURL + "/api/v1/users?forceMail=tiago.geaper@gmail.com",
                     method: "GET"
@@ -69,8 +67,6 @@ db.on('open', () => {
                                 if (issue.author.id == user.id) {
                                     issue.author = user;
                                     issue.startDate = issue.start_date.substring(0, 10);
-                                    console.log(issue.startDate);
-
 
                                     db.collection("users").updateOne({"_id": user.id}, {$set: user}, {upsert: true, multi: true}).then(result => {
                                         //const { matchedCount, modifiedCount } = result;
@@ -100,6 +96,7 @@ db.on('open', () => {
                                             html: body
                                         };
     
+                                        /*
                                         transporter.sendMail(mailOptions, function (error, info) {
                                             if (error) {
                                                 console.log(error);
@@ -107,6 +104,7 @@ db.on('open', () => {
                                                 console.log('Email sent: ' + info.response);
                                             }
                                         });
+                                        */
                                     })
                                     .catch(error => {
                                         console.error(error);
@@ -121,7 +119,7 @@ db.on('open', () => {
                 console.log('error' + response.statusCode);
             }
         });
-    }, 10000);
+    }, 1000);
 
 });
 
@@ -206,7 +204,6 @@ app.get("/evaluation/:id", function(req, res) {
                             numberOfTickets: score
                         });
                         
-                        console.log(globalStats);
                     })
                     .error(error => {
                         console.error(error);
