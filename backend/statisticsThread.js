@@ -22,7 +22,8 @@ module.exports = {
                     meanScore: 0,
                     stDeviation: 0,
                     issues: [],
-                    totalScores : 0
+                    totalScores : 0,
+                    meanResponseTimes: []
                 };
 
                 globalStats.startDate = issue.startDate;
@@ -36,6 +37,8 @@ module.exports = {
 
                         if(gs.issues.indexOf(issue._id) == -1) {
                             gs.issues.push(issue._id);
+                            //3. O tempo médio de resposta a um pedido de helpdesk por cada nível prioridade de atendimento
+                            gs.meanResponseTime = math.mean(gs.meanResponseTimes);
                         }
                         
                             let foundIssues = [];
@@ -44,6 +47,7 @@ module.exports = {
                                     if(result) {
                                         foundIssues.push(result);
                                         if(gs.issues.indexOf(issue._id) == -1) {
+                                            // 1. O número total de pedidos de helpdesk
                                             gs.numberOfTickets++;
                                         }
 
@@ -53,12 +57,15 @@ module.exports = {
             
                                             if(foundIssue.score) {
                                                 scores.push(foundIssue.score);
+                                                //2. A percentagem de pedidos de helpdesk que não foram alvo de avaliação por parte dos clientes
                                                 gs.totalScores++;
                                             }
                                         }
             
                                         if(scores.length > 0) {
+                                            // 5. O desvio padrão das votações dos clientes
                                             gs.stDeviation = math.std(scores);
+                                            // 4. A avaliação média da qualidade do serviço de helpdesk
                                             gs.meanScore = math.mean(scores);
                                         }
             
@@ -71,6 +78,9 @@ module.exports = {
                     else {
                         globalStats.numberOfTickets = 1;
                         globalStats.issues.push(issue._id);
+                        //3. O tempo médio de resposta a um pedido de helpdesk por cada nível prioridade de atendimento
+                        globalStats.meanResponseTimes.push(Math.floor((Math.abs(new Date(issue.closed_on) - new Date(issue.created_on)))) / 60);
+                        globalStats.meanResponseTime = globalStats.meanResponseTimes[0];
 
                         db.collection("globalStats").insertOne(globalStats, function(err, result) {
                         });
