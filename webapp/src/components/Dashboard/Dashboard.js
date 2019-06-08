@@ -4,23 +4,25 @@ import Navigation from '../Navigation/Navigation';
 import DateRow from '../DateRow/DateRow';
 import Chart from 'chart.js';
 import ReactDOM from 'react-dom';
+const axios = require('axios');
+
 
 export default class Dashboard extends React.Component {
 
-    /*
-    componentDidMount() {
-        const [users, setUsers] = useState([]);
+    state = {
+        evaluationExecuted : false,
+        evaluation: false
+    };
 
-        const fetchUsers = async () => {
-            const data = await fetch(global.apiBaseURL + "/users").then(dataPromise => dataPromise.json()).then(data => {
-                setUsers(data);
-            });
-        };
-
-        fetchUsers();
-    }
-    */
     componentDidMount() {
+
+        axios.get(global.apiBaseURL + "/stats?allTime=true").then(response => {
+            console.log(response);
+        })
+        .catch(error => {
+            console.error("Cannot get all time stats");
+        });
+
         this.initializeChart(this.props.config);
     }
 
@@ -158,6 +160,42 @@ export default class Dashboard extends React.Component {
                         <div className="col-md-6">
                             <canvas ref="chart" id="chart-area"></canvas>
                             <canvas ref="priorityChart" id="priority-chart"></canvas>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col-md-3">
+                        <h6>Top 5 - Fastest workers</h6>
+                            <table className="table table-hover table-sm">
+                                <thead className="thead-dark">
+                                    <tr>
+                                        <th>Position</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Test</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="col-md-3">
+                            <h6>Top 5 - Quality workers</h6>
+                            <table className="table table-hover table-sm">
+                                <thead className="thead-dark">
+                                    <tr>
+                                        <th>Position</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Test</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

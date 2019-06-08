@@ -181,6 +181,43 @@ app.get("/globalIndicators", function(req, res) {
     */
 });
 
+
+app.get("/stats", function(req, res) {
+    let allTime = req.query.allTime;
+
+    // All time stats
+    if(allTime) {
+        db.collection("globalStats").find({}).toArray(function (err, result) {
+            if(err) throw err;
+
+            if(result) {
+                let globalStats = result;              
+                let stats = {};
+
+                console.log(globalStats.length);
+
+                globalStats.map(globalStat => {
+                    stats.meanResponseTime += globalStat.meanResponseTime;
+                    stats.meanScore += globalStat.meanScore;
+                    stats.stDeviation += globalStat.stDeviation;
+                    stats.numberOfTickets += globalStat.numberOfTickets;
+                });
+
+                stats.meanResponseTime /= globalStats.issues.length;
+                stats.meanScore /= globalStats.issues.length;
+                stats.stDeviation /= globalStats.issues.length;
+                stats.numberOfTickets /= globalStats.issues.length;
+                stats.issues = globalStats.issues;
+
+                res.send(stats);
+            }
+            else {
+                res.status(500).send({ error: "Could not find stats"});
+            }
+        });
+    }
+});
+
 // Endpoint that gets the evaluation of the user
 app.get("/evaluation/:id", function(req, res) {
     let issueId = Number(req.params.id);

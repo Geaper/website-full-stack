@@ -32,6 +32,8 @@ class DateRow extends React.Component {
 
                         {'\u00A0'}<label><b>End Date: </b></label>
                         {'\u00A0'}<DatePicker selected={this.state.startDate} onChange={this.handleChange} />
+
+                        <button type="button" class="btn btn-light">Submit</button>
                     </div>
                 </div>
 
