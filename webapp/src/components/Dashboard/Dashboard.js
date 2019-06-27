@@ -10,7 +10,7 @@ const axios = require('axios');
 export default class Dashboard extends React.Component {
 
     state = {
-        evaluationExecuted : false,
+        evaluationExecuted: false,
         evaluation: false
     };
 
@@ -19,9 +19,9 @@ export default class Dashboard extends React.Component {
         axios.get(global.apiBaseURL + "/stats?allTime=true").then(response => {
             console.log(response);
         })
-        .catch(error => {
-            console.error("Cannot get all time stats");
-        });
+            .catch(error => {
+                console.error("Cannot get all time stats");
+            });
 
         this.initializeChart(this.props.config);
     }
@@ -114,57 +114,44 @@ export default class Dashboard extends React.Component {
 
     render() {
 
-        let card = {
-            width: "18rem"
-        }
-        let top10 = {
-            marginTop: "10px"
-        }
-
         return (
             <div className="App">
                 <Navigation />
                 <DateRow />
                 <div className="container-fluid">
                     <div className="row">
-                        <div className="col-md-6">
-                            <div className="row justify-content-center">
-                                <div className="col-md-2">
-                                    <div className="card" style={card}>
-                                        <div className="card-body">
-                                            <h5 className="card-title">Number of Tickets</h5>
-                                            <p className="card-text">5000</p>
-                                        </div>
-                                    </div>
+                        <div className="col-md-2">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h5 className="card-title">Number of Tickets</h5>
+                                    <p className="card-text">5000</p>
                                 </div>
                             </div>
-                            <div className="row justify-content-around" style={top10}>
-                                <div className="col-md-2">
-                                    <div className="card" style={card}>
-                                        <div className="card-body">
-                                            <h5 className="card-title">Average Survey Quality</h5>
-                                            <p className="card-text">5 starts</p>
-                                        </div>
-                                    </div>
+                        </div>
+                        <div className="col-md-2">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h5 className="card-title">Average Survey Quality</h5>
+                                    <p className="card-text">5 starts</p>
                                 </div>
-                                <div className="col-md-2">
-                                    <div className="card" style={card}>
-                                        <div className="card-body">
-                                            <h5 className="card-title">Standard Deviation</h5>
-                                            <p className="card-text">0.12</p>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+                        <div className="col-md-2">
+                            <div className="card">
+                                <div className="card-body">
+                                    <h5 className="card-title">Standard Deviation</h5>
+                                    <p className="card-text">0.12</p>
                                 </div>
                             </div>
                         </div>
                         <div className="col-md-6">
                             <canvas ref="chart" id="chart-area"></canvas>
-                            <canvas ref="priorityChart" id="priority-chart"></canvas>
                         </div>
                     </div>
+                    <hr />
                     <div className="row">
                         <div className="col-md-3">
-                        <h6>Top 5 - Fastest workers</h6>
+                            <h6>Top 5 - Fastest workers</h6>
                             <table className="table table-hover table-sm">
                                 <thead className="thead-dark">
                                     <tr>
@@ -173,6 +160,22 @@ export default class Dashboard extends React.Component {
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Test</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Test</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Test</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Test</td>
+                                    </tr>
                                     <tr>
                                         <td>1</td>
                                         <td>Test</td>
@@ -194,12 +197,31 @@ export default class Dashboard extends React.Component {
                                         <td>1</td>
                                         <td>Test</td>
                                     </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Test</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Test</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Test</td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Test</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
+                        <div className="col-md-6">
+                            <canvas ref="priorityChart" id="priority-chart"></canvas>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div >
         );
     }
 }

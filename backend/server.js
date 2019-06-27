@@ -96,6 +96,7 @@ db.on('open', () => {
                                             html: body
                                         };
     
+                                        /*
                                         transporter.sendMail(mailOptions, function (error, info) {
                                             if (error) {
                                                 console.log(error);
@@ -103,6 +104,7 @@ db.on('open', () => {
                                                 console.log('Email sent: ' + info.response);
                                             }
                                         });
+                                        */
                                     })
                                     .catch(error => {
                                         console.error(error);

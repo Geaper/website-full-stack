@@ -23,20 +23,19 @@ class DateRow extends React.Component {
         return(
             <div className="App">
                 <div className="row">
-                    <div className="col-md-6">
-
-                    </div>
-                    <div className="col-md-6">
+                    <div className="col-md-12">
+                    <div className="text-right" style={{marginTop: "5px"}}>
                         <label><b>Start Date: </b></label>
                         {'\u00A0'}<DatePicker selected={this.state.startDate} onChange={this.handleChange} />
 
                         {'\u00A0'}<label><b>End Date: </b></label>
                         {'\u00A0'}<DatePicker selected={this.state.startDate} onChange={this.handleChange} />
 
-                        <button type="button" class="btn btn-light">Submit</button>
+                        <button type="button" class="btn btn-info btn-sm" style={{marginLeft: "10px"}}>Submit <i class="fab fa-get-pocket"></i></button>
+                        </div>
                     </div>
                 </div>
-
+                <hr style={{marginTop: "0"}}/>
             </div>
         );
     }
